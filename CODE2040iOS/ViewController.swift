@@ -16,24 +16,60 @@ class ViewController: UIViewController {
     @IBOutlet weak var c2Check: UIImageView!
     @IBOutlet weak var c3Check: UIImageView!
     @IBOutlet weak var c4Check: UIImageView!
+    @IBOutlet weak var c1X: UIImageView!
+    @IBOutlet weak var c2X: UIImageView!
+    @IBOutlet weak var c3X: UIImageView!
+    @IBOutlet weak var c4X: UIImageView!
+    var checks : [UIImageView]?
+    var exes : [UIImageView]?
+    
+    //outlets to be able to grab user input for email and github
+    @IBOutlet weak var emailField: UITextField!
+    @IBOutlet weak var githubField: UITextField!
     
     //runs when view comes up
     override func viewDidLoad() {
         super.viewDidLoad()//superclass needs to be initialized too
-        //start the checkmarks hidden
-        c1Check.hidden=true
-        c2Check.hidden=true
-        c3Check.hidden=true
-        c4Check.hidden=true
+        checks = [c1Check, c2Check, c3Check, c4Check]
+        exes = [c1X, c2X, c3X, c4X]
+        //start everything hidden
+        hideAllIcons()
+    }
+    
+    // function to clear all icon images
+    func hideAllIcons() {
+        for check in checks! {
+            check.hidden = true
+        }
+        for ex in exes! {
+            ex.hidden = true
+        }
+    }
+    
+    //function to check if the server responded with a pass, and then put the right icon up
+    func verifyPass(JSON : AnyObject, challenge : Int){
+        //casting
+        let input = JSON as [String: AnyObject]
+        //the ones that say pass are keyed by result
+        if contains(input.keys.array, "result"){
+            //see if it says pass
+            if input["result"]?.rangeOfString("PASS") != nil {
+                //unhide check
+                self.checks![challenge].hidden = false
+            } else {
+                //unhide x
+                self.exes![challenge].hidden = false
+            }
+        } else {
+            //unhide x
+            self.exes![challenge].hidden = false
+        }
     }
     
     //called by main button
     @IBAction func ButtonPress(sender: AnyObject) {
         //when you push the button, hide the buttons, so retrials also refresh the checkmarks
-        c1Check.hidden=true
-        c2Check.hidden=true
-        c3Check.hidden=true
-        c4Check.hidden=true
+        hideAllIcons()
         //make sure this runs on the main queue, not best practice in general with iOS apps, but makes sure this 
         //test app runs in a reasonable amount of time
         dispatch_async(dispatch_get_main_queue()) {
@@ -48,21 +84,24 @@ class ViewController: UIViewController {
         let suffixes = ["register","getstring","validatestring","haystack","validateneedle","prefix", "validateprefix", "time", "validatetime","status"]
         return prefix + suffixes[index]
     }
+    
     /*
     This block coming up is the main body of the challenge.
     It goes one by one through the different parts of the challenge, using the Alamofire networking library
     the response handlers do the actual manipulation, those are the anonymous functions accepted by the responsejson method
     because it is async, each response handler, once it is finished, and passes the info back to the server, calls the next method within the request handler to avoid stuff going out of order
     */
+    
     //this method gets the token from the server and passes it onto reverseChallenge
     func runChallenge(){
         //basic syntax of Alamofire: Alamofire.request(method (in our case always post) referring to an enum inside the framework (I think), url as a string, parameters as a dictionary mapping strings to AnyObject(s), encoding of the parameters (in our case always json))
-        Alamofire.request(.POST, url(0), parameters:["email":"mendoza.mark.a@gmail.com","github":"https://github.com/mrkmndz/APIChallenge"], encoding: .JSON)
+        Alamofire.request(.POST, url(0), parameters:["email":emailField.text,"github":githubField.text], encoding: .JSON)
             //responseJSON takes a "response handler" which in our case is always just an anonymous function
             //we don't care about requests, urlresponse or errors so we drop them (_)
             .responseJSON { (_, _, JSON, _) in
                 //this takes the token and casts it as a string to string dictionary and then gets the value assosciated with "result" and unwraps it (how Swift deals with optionals)
                 let token = (JSON as [String : String])["result"]!
+                println(token)
                 //calls the next challenge
                 self.reverseChallenge(token)
         }
@@ -81,6 +120,8 @@ class ViewController: UIViewController {
                     Alamofire.request(.POST, self.url(2), parameters:["token": token, "string" : reversed], encoding: .JSON)
                         .responseJSON { (_, _, JSON, _) in
                             //once you get a response, call the next challenge
+                            self.verifyPass(JSON!, challenge: 0)
+                            println(JSON!)
                             self.needleChallenge(token)
                     }
         }
@@ -118,6 +159,8 @@ class ViewController: UIViewController {
                 Alamofire.request(.POST, self.url(4), parameters:["token": token, "needle" : index], encoding: .JSON)
                     .responseJSON { (_, _, JSON, _) in
                         //call the next challenge
+                        self.verifyPass(JSON!, challenge: 1)
+                        println(JSON!)
                         self.prefixChallenge(token)
                 }
         }
@@ -161,6 +204,8 @@ class ViewController: UIViewController {
                 Alamofire.request(.POST, self.url(6), parameters:["token": token, "array" : filteredArray], encoding: .JSON)
                     .responseJSON { (_, _, JSON, _) in
                         //move on to the next one
+                        self.verifyPass(JSON!, challenge: 2)
+                        println(JSON!)
                         self.datingChallenge(token)
                 }
         }
@@ -188,6 +233,8 @@ class ViewController: UIViewController {
                 Alamofire.request(.POST, self.url(8), parameters:["token": token, "datestamp" : output], encoding: .JSON)
                     .responseJSON { (_, _, JSON, _) in
                         //go to the final step
+                        println(JSON!)
+                        self.verifyPass(JSON!, challenge: 3)
                         self.getScore(token)
                 }
         }
@@ -196,23 +243,7 @@ class ViewController: UIViewController {
         //get the pass fail status
         Alamofire.request(.POST, url(9), parameters:["token":token], encoding: .JSON)
             .responseJSON{ (_, _, JSON, _) in
-                //unpack
-                let results = (JSON as [String : [String:Bool]])["result"]!
-                //if its not a nil value (unlisted)
-                if (results["Stage 1 passed"] != nil) {
-                    //then pass fail determines the state of the checks
-                    self.c1Check.hidden = !results["Stage 1 passed"]!
-                }
-                //etc...
-                if (results["Stage 2 passed"] != nil) {
-                    self.c2Check.hidden = !results["Stage 2 passed"]!
-                }
-                if (results["Stage 3 passed"] != nil) {
-                    self.c3Check.hidden = !results["Stage 3 passed"]!
-                }
-                if (results["Stage 4 passed"] != nil) {
-                    self.c4Check.hidden = !results["Stage 4 passed"]!
-                }
+                println(JSON!)
 
         }
     }

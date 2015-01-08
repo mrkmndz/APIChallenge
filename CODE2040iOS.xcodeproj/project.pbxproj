@@ -14,6 +14,7 @@
 		8B9FC2691A5BD3E1000F0873 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8B9FC2671A5BD3E1000F0873 /* LaunchScreen.xib */; };
 		8B9FC2751A5BD3E1000F0873 /* CODE2040iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9FC2741A5BD3E1000F0873 /* CODE2040iOSTests.swift */; };
 		8B9FC2931A5BD4E9000F0873 /* Alamofire.framework in CopyFrameworks */ = {isa = PBXBuildFile; fileRef = 8B9FC28D1A5BD468000F0873 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8BB4B7871A5E6743005B9A4E /* 600px-Red_x.svg.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BB4B7861A5E6743005B9A4E /* 600px-Red_x.svg.png */; };
 		8BCF02281A5BFBEE00A00EF4 /* Check_mark.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCF02271A5BFBEE00A00EF4 /* Check_mark.png */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		8B9FC2731A5BD3E1000F0873 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B9FC2741A5BD3E1000F0873 /* CODE2040iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CODE2040iOSTests.swift; sourceTree = "<group>"; };
 		8B9FC2871A5BD468000F0873 /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Alamofire.xcodeproj; path = Alamofire/Alamofire.xcodeproj; sourceTree = "<group>"; };
+		8BB4B7861A5E6743005B9A4E /* 600px-Red_x.svg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "600px-Red_x.svg.png"; sourceTree = "<group>"; };
 		8BCF02271A5BFBEE00A00EF4 /* Check_mark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Check_mark.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +100,7 @@
 		8B9FC2501A5BD3E1000F0873 = {
 			isa = PBXGroup;
 			children = (
+				8BB4B7861A5E6743005B9A4E /* 600px-Red_x.svg.png */,
 				8BCF02271A5BFBEE00A00EF4 /* Check_mark.png */,
 				8B9FC25B1A5BD3E1000F0873 /* CODE2040iOS */,
 				8B9FC2711A5BD3E1000F0873 /* CODE2040iOSTests */,
@@ -271,6 +274,7 @@
 				8BCF02281A5BFBEE00A00EF4 /* Check_mark.png in Resources */,
 				8B9FC2691A5BD3E1000F0873 /* LaunchScreen.xib in Resources */,
 				8B9FC2661A5BD3E1000F0873 /* Images.xcassets in Resources */,
+				8BB4B7871A5E6743005B9A4E /* 600px-Red_x.svg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
